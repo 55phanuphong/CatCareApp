@@ -12,7 +12,20 @@
           "package_name": "com.example.catcareapp"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "925323016359-n4o1d7jeijkrfou78f5ff8eskf74ulqq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.catcareapp",
+            "certificate_hash": "de474d88deed6eb8bc05770722108033987139ab"
+          }
+        },
+        {
+          "client_id": "925323016359-sap0j59m6ercrun90j3fcf7smpst8ccd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAc_IdBKqHR4o042Q4DQOdcxkMpKL208J4"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "925323016359-sap0j59m6ercrun90j3fcf7smpst8ccd.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "925323016359-n6g9bjvgvia520kta0gtjspg11h7bu1p.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.catcareapp"
+              }
+            }
+          ]
         }
       }
     }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
+import '../services/google_sign_in_service.dart'; // ✅ เพิ่ม import
 import 'register_page.dart';
 import 'main_page.dart';
 import 'forgot_password_page.dart';
@@ -15,13 +16,15 @@ class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _auth = AuthService();
+  final _googleService = GoogleSignInService(); // ✅ เพิ่ม service
 
   bool _isLoading = false;
+  bool _googleLoading = false; // ✅ แสดงโหลดตอนกด Gmail
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFAF3E0), // สีพื้นหลังครีมอ่อน
+      backgroundColor: const Color(0xFFFAF3E0),
       body: Center(
         child: SingleChildScrollView(
           child: Padding(
@@ -32,10 +35,7 @@ class _LoginPageState extends State<LoginPage> {
                 // โลโก้
                 Column(
                   children: [
-                    Image.asset(
-                      'images/logo1.png',
-                      height: 200,
-                    ),
+                    Image.asset('images/logo1.png', height: 200),
                     const SizedBox(height: 20),
                     const Text(
                       "เข้าสู่ระบบ",
@@ -47,9 +47,81 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ],
                 ),
+
                 const SizedBox(height: 20),
 
-                // Email / Username
+                // 🔸 ปุ่ม Google Sign-In
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    icon: Image.asset('images/google1.png', height: 24),
+                    label: _googleLoading
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : const Text(
+                            "เข้าสู่ระบบด้วย Google",
+                            style: TextStyle(fontSize: 16),
+                          ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black87,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25),
+                        side: const BorderSide(color: Colors.grey),
+                      ),
+                    ),
+                    onPressed: _googleLoading
+                        ? null
+                        : () async {
+                            setState(() => _googleLoading = true);
+                            try {
+                              final user =
+                                  await _googleService.signInWithGoogle();
+                              if (user != null && mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      "🎉 ยินดีต้อนรับ ${user.displayName ?? ''}",
+                                      style: const TextStyle(
+                                          color: Colors.white, fontSize: 16),
+                                    ),
+                                    backgroundColor: Colors.green,
+                                    behavior: SnackBarBehavior.floating,
+                                    margin: const EdgeInsets.all(12),
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(10)),
+                                    ),
+                                  ),
+                                );
+                                await Future.delayed(
+                                    const Duration(milliseconds: 800));
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => const MainPage()),
+                                );
+                              }
+                            } catch (e) {
+                              debugPrint("❌ Google Sign-In error: $e");
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                      "ไม่สามารถเข้าสู่ระบบด้วย Google ได้"),
+                                  backgroundColor: Colors.redAccent,
+                                ),
+                              );
+                            } finally {
+                              setState(() => _googleLoading = false);
+                            }
+                          },
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                // Email
                 TextField(
                   controller: _emailController,
                   decoration: InputDecoration(
@@ -64,6 +136,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
+
                 const SizedBox(height: 16),
 
                 // Password
@@ -104,7 +177,7 @@ class _LoginPageState extends State<LoginPage> {
 
                 const SizedBox(height: 8),
 
-                // 🔹 Login Button
+                // 🔹 ปุ่ม Login
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -138,8 +211,8 @@ class _LoginPageState extends State<LoginPage> {
                                     behavior: SnackBarBehavior.floating,
                                     margin: EdgeInsets.all(12),
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(10)),
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(10)),
                                     ),
                                   ),
                                 );
@@ -165,8 +238,8 @@ class _LoginPageState extends State<LoginPage> {
                                     behavior: SnackBarBehavior.floating,
                                     margin: EdgeInsets.all(12),
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(10)),
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(10)),
                                     ),
                                   ),
                                 );
@@ -194,20 +267,17 @@ class _LoginPageState extends State<LoginPage> {
                             }
                           },
                     child: _isLoading
-                        ? const CircularProgressIndicator(
-                            color: Colors.white,
-                          )
+                        ? const CircularProgressIndicator(color: Colors.white)
                         : const Text(
                             "Login",
-                            style:
-                                TextStyle(fontSize: 16, color: Colors.white),
+                            style: TextStyle(fontSize: 16, color: Colors.white),
                           ),
                   ),
                 ),
 
-                const SizedBox(height: 16),
+                const SizedBox(height: 15),
 
-                // Register link
+                // Register
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

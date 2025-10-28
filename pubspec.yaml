@@ -53,6 +53,7 @@ dependencies:
   flutter_hooks: ^0.21.3+1
   cupertino_icons: ^1.0.8
   font_awesome_flutter: ^10.7.0
+  google_sign_in: ^6.2.1
 
 dev_dependencies:
   flutter_test:
@@ -65,3 +66,5 @@ flutter:
   assets:
     - images/logo.jpg
     - images/logo1.png
+    - images/google.png
+    - images/google1.png
